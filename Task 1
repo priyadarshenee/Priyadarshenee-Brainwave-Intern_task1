@@ -1,1 +1,76 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from datetime import datetime, timedelta
 
+# Simulating supermarket sales data for one year
+np.random.seed(0)
+
+# Generate dates for one year (365 days)
+dates = pd.date_range(start='2023-01-01', end='2023-12-31', freq='D')
+
+# Simulating sales by product category
+products = ['Fruits', 'Vegetables', 'Dairy', 'Meat', 'Beverages', 'Snacks']
+base_sales = np.random.randint(1000, 5000, size=len(products))
+daily_sales = {product: base_sales[i] + np.random.randint(-500, 500, size=len(dates)) for i, product in enumerate(products)}
+
+# Create DataFrame for daily sales
+df = pd.DataFrame({'Date': dates})
+for product in products:
+    df[product] = daily_sales[product]
+
+# Total sales per product category
+total_sales_per_product = df[products].sum()
+
+# Total sales over the entire period
+total_sales = df[products].sum().sum()
+
+# Average daily sales
+average_daily_sales = df[products].mean().mean()
+
+# Visualizing daily sales trends
+plt.figure(figsize=(12, 6))
+plt.plot(df['Date'], df[products])
+plt.title('Daily Sales Trends by Product Category')
+plt.xlabel('Date')
+plt.ylabel('Sales')
+plt.legend(products, loc='upper left')
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+
+# Monthly sales trends
+df['Month'] = df['Date'].dt.month
+monthly_sales = df.groupby('Month')[products].sum()
+
+# Plotting monthly sales trends
+plt.figure(figsize=(10, 6))
+monthly_sales.plot(kind='bar', stacked=True, figsize=(10, 6))
+plt.title('Monthly Sales Trends by Product Category')
+plt.xlabel('Month')
+plt.ylabel('Sales')
+plt.xticks(rotation=0)
+plt.legend(products, loc='upper right')
+plt.tight_layout()
+plt.show()
+
+# Displaying results
+print(f"Total Sales: ${total_sales:.2f}")
+print(f"Average Daily Sales: ${average_daily_sales:.2f}")
+print("\nTotal Sales per Product Category:")
+print(total_sales_per_product)
+
+OUTPUT 
+
+Total Sales: $6510836.00
+Average Daily Sales: $2972.98
+
+Total Sales per Product Category:
+Fruits        1362080
+Vegetables    1323395
+Dairy          962766
+Meat          1561533
+Beverages      670115
+Snacks         630947
+dtype: int64
